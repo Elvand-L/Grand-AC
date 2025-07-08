@@ -1,0 +1,16 @@
+[
+  {
+    "model": "FTC15NV14",
+    "name": "Ac DAIKIN 0.5pk Standard Thailand FTC15NV14",
+    "brand": "daikin",
+    "PK_Size": 0.5,
+    "Price": 3500000
+  },
+  {
+    "model": "FTKZ25XV",
+    "name": "AC Daikin Inverter Zeta SREAMER 1pk",
+    "brand": "daikin",
+    "PK_Size": 1,
+    "Price": 9000000
+  }
+]

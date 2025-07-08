@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Products | AC Pro</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="styles/shop.css">
+</head>
+<body class="bg-white">
+
+    <header id="main-header" class="sticky top-0 left-0 right-0 z-50 py-4 bg-gray-800 shadow-md">
+        <nav class="container mx-auto px-6 flex justify-between items-center text-white">
+            <ul class="hidden md:flex items-center space-x-8 text-sm font-bold tracking-wider">
+                <li><a href="shop.html" class="nav-link">SHOP</a></li>
+                <li><a href="index.html#services" class="nav-link">SERVICES</a></li>
+                <li><a href="index.html#partners" class="nav-link">BRANDS</a></li>
+            </ul>
+            <div class="text-2xl font-black tracking-widest"><a href="index.html">AC PRO</a></div>
+            <ul class="hidden md:flex items-center space-x-8 text-sm font-bold tracking-wider">
+                <li><a href="#" class="nav-link">ABOUT</a></li>
+                <li><a href="#contact" class="nav-link">CONTACT</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="shop-section" class="py-16 sm:py-24">
+        <div class="container mx-auto px-4">
+            <div class="text-left mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Shop Our Products</h2>
+                <p class="text-gray-500 mt-1">Find the perfect AC for your space.</p>
+            </div>
+
+            <div id="filter-container" class="bg-white p-6 rounded-xl border border-gray-200 mb-12">
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <div><label for="filter-pk" class="font-semibold text-gray-700">PK Size</label><select id="filter-pk" class="filter-control mt-1 block w-full p-2 border border-gray-300 rounded-md"><option value="all">All</option><option value="0.5">1/2 PK</option><option value="0.75">3/4 PK</option><option value="1">1 PK</option><option value="1.5">1.5 PK</option><option value="2">2 PK</option></select></div>
+                    <div><label for="filter-brand" class="font-semibold text-gray-700">Brand</label><select id="filter-brand" class="filter-control mt-1 block w-full p-2 border border-gray-300 rounded-md"><option value="all">All</option><option value="daikin">Daikin</option><option value="panasonic">Panasonic</option><option value="sharp">Sharp</option><option value="lg">LG</option></select></div>
+                    <div><label for="filter-tech" class="font-semibold text-gray-700">Technology</label><select id="filter-tech" class="filter-control mt-1 block w-full p-2 border border-gray-300 rounded-md"><option value="all">All</option><option value="standard">Standard</option><option value="inverter">Inverter</option><option value="low-watt">Low Watt</option></select></div>
+                    <div><label for="filter-type" class="font-semibold text-gray-700">AC Type</label><select id="filter-type" class="filter-control mt-1 block w-full p-2 border border-gray-300 rounded-md"><option value="all">All</option><option value="split">Wall Mounted Split</option><option value="cassette">Cassette</option><option value="floor">Floor Standing</option></select></div>
+                    <div><label for="sort-by" class="font-semibold text-gray-700">Sort By</label><select id="sort-by" class="filter-control mt-1 block w-full p-2 border border-gray-300 rounded-md"><option value="default">Default</option><option value="price-asc">Price: Low to High</option><option value="price-desc">Price: High to Low</option><option value="name-asc">Brand: A-Z</option><option value="name-desc">Brand: Z-A</option></select></div>
+                </div>
+            </div>
+
+            <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                </div>
+            <div id="loading-indicator" class="text-center py-12">
+                <div class="loading-spinner mx-auto"></div>
+                <p class="mt-4 text-gray-600">Loading Products...</p>
+            </div>
+        </div>
+    </section>
+    
+    <div id="quick-view-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"></div>
+
+    <script type="module">
+        let allProducts = [];
+
+        // --- DATA FETCHING ---
+        async function fetchAllProducts() {
+            const loadingIndicator = document.getElementById('loading-indicator');
+            loadingIndicator.style.display = 'block';
+            try {
+                // Fetch data from your new API endpoint
+                const response = await fetch('/api/getProducts');
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.statusText}`);
+                }
+                allProducts = await response.json();
+            } catch (error) {
+                console.error("Error fetching products:", error);
+                document.getElementById('product-grid').innerHTML = `<p class="col-span-full text-center text-red-500">Error loading products from the API.</p>`;
+            } finally {
+                loadingIndicator.style.display = 'none';
+            }
+        }
+
+        // --- RENDERING LOGIC ---
+        function renderProducts(productsToDisplay) {
+            const productGrid = document.getElementById('product-grid');
+            productGrid.innerHTML = ''; 
+
+            if (productsToDisplay.length === 0) {
+                productGrid.innerHTML = `<p class="col-span-full text-center text-gray-500">No products match the current filters.</p>`;
+                return;
+            }
+
+            productsToDisplay.forEach(product => {
+                const card = document.createElement('div');
+                card.className = "product-card flex flex-col bg-white rounded-lg shadow-md border border-gray-200 p-4";
+                card.dataset.id = product.id;
+                
+                card.innerHTML = `
+                    <img src="${product.imageUrl || 'https://placehold.co/400x300/e2e8f0/94a3b8?text=No+Image'}" alt="${product.name}" class="w-full h-40 object-cover rounded-md mb-4">
+                    <div class="flex-grow">
+                        <h3 class="font-bold text-gray-800">${product.name || 'No Name'}</h3>
+                        <div class="star-rating my-2">${getStarHTML(product.rating)}</div>
+                        <p class="text-lg font-semibold text-gray-900 mb-4">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(product.Price || 0)}</p>
+                    </div>
+                    <div class="mt-auto">
+                        <button class="quick-view-btn w-full text-center bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700">Quick View</button>
+                    </div>
+                `;
+                card.querySelector('.quick-view-btn').addEventListener('click', () => openQuickView(product.id));
+                productGrid.appendChild(card);
+            });
+        }
+
+        function getStarHTML(rating) {
+            const fullStars = Math.floor(rating || 0);
+            let starsHTML = '';
+            for (let i = 0; i < 5; i++) {
+                starsHTML += `<span class="star ${i < fullStars ? 'filled' : ''}">${i < fullStars ? '&#9733;' : '&#9734;'}</span>`;
+            }
+            return starsHTML;
+        }
+
+        // --- FILTERING & SORTING LOGIC ---
+        function updateShopView() {
+            const activeFilters = {
+                pk: document.getElementById('filter-pk').value,
+                brand: document.getElementById('filter-brand').value,
+                tech: document.getElementById('filter-tech').value,
+                type: document.getElementById('filter-type').value
+            };
+            const sortBy = document.getElementById('sort-by').value;
+
+            let filtered = allProducts.filter(p => 
+                (activeFilters.pk === 'all' || p.PK_Size == activeFilters.pk) &&
+                (activeFilters.brand === 'all' || p.brand === activeFilters.brand) &&
+                (activeFilters.tech === 'all' || p.Technology === activeFilters.tech) &&
+                (activeFilters.type === 'all' || p.Type === activeFilters.type)
+            );
+
+            filtered.sort((a, b) => {
+                switch (sortBy) {
+                    case 'price-asc': return a.Price - b.Price;
+                    case 'price-desc': return b.Price - a.Price;
+                    case 'name-asc': return a.name.localeCompare(b.name);
+                    case 'name-desc': return b.name.localeCompare(a.name);
+                    default: return 0;
+                }
+            });
+            
+            renderProducts(filtered);
+        }
+
+        // --- QUICK VIEW MODAL ---
+        function openQuickView(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+
+            const modal = document.getElementById('quick-view-modal');
+            const descriptionHTML = window.marked ? marked.parse(product.Description || '') : (product.Description || '').replace(/\\n/g, '<br>');
+
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl relative flex flex-col max-h-[90vh]">
+                    <button class="modal-close-btn absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl z-10">&times;</button>
+                    <div class="grid md:grid-cols-2 gap-8 p-8 overflow-hidden">
+                        <div>
+                            <img src="${product.imageUrl || 'https://placehold.co/400x300/e2e8f0/94a3b8?text=No+Image'}" alt="${product.name}" class="w-full h-auto object-cover rounded-lg">
+                        </div>
+                        <div class="overflow-y-auto pr-4">
+                            <h3 class="text-2xl font-bold">${product.name}</h3>
+                            <div class="star-rating my-2">${getStarHTML(product.rating)}</div>
+                            <p class="text-3xl font-bold text-blue-600 my-4">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(product.Price)}</p>
+                            <div class="text-gray-600 mb-6 prose prose-sm max-w-none">${descriptionHTML}</div>
+                            <a href="${product.Tokopedia_Link || '#'}" target="_blank" class="block w-full text-center mt-6 bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700">Buy at Tokopedia</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            modal.style.display = 'flex';
+            modal.querySelector('.modal-close-btn').addEventListener('click', () => modal.style.display = 'none');
+        }
+        
+        // --- INITIALIZATION ---
+        async function initializeShop() {
+            // Add event listeners to filter controls
+            document.querySelectorAll('.filter-control').forEach(el => {
+                el.addEventListener('change', updateShopView);
+            });
+            
+            await fetchAllProducts();
+
+            // *** NEW: Check for URL parameters to apply initial filter ***
+            const urlParams = new URLSearchParams(window.location.search);
+            const pkFromUrl = urlParams.get('pk');
+            if (pkFromUrl) {
+                const pkSelect = document.getElementById('filter-pk');
+                if (pkSelect.querySelector(`option[value="${pkFromUrl}"]`)) {
+                    pkSelect.value = pkFromUrl;
+                }
+            }
+
+            updateShopView(); // Initial render
+        }
+
+        initializeShop();
+    </script>
+</body>
+</html>

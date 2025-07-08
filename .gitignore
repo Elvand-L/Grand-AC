@@ -1,0 +1,8 @@
+# Node.js dependencies
+node_modules/
+
+# Vercel deployment folder
+.vercel/
+
+# Private credentials
+grand-ac-ca90f-firebase-adminsdk-fbsvc-3dbb68d83f.json

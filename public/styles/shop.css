@@ -1,0 +1,10 @@
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; color: #111827; }
+        .nav-link { position: relative; text-decoration: none; padding-bottom: 4px; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 1.5px; display: block; margin-top: 2px; right: 0; background: #fff; transition: width 0.3s ease; }
+        .nav-link:hover::after { width: 100%; left: 0; background: #fff; }
+        .star-rating .star.filled { color: #f59e0b; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-spinner { display: inline-block; width: 2.5rem; height: 2.5rem; border: 4px solid rgba(59, 130, 246, 0.3); border-right-color: #2563eb; border-radius: 50%; animation: spin 1s linear infinite; }
+        .prose li { margin-top: 0.5em; }
+        .prose h3, .prose h4 { margin-top: 1.5em; }
+        .prose p { margin-top: 1em; }

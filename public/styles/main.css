@@ -1,0 +1,74 @@
+/* Custom styles and animations */
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+            color: #111827;
+        }
+
+        /* Sticky Header Styles */
+        #main-header {
+            transition: background-color 0.3s ease-in-out, padding 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        #main-header.header-scrolled {
+            background-color: rgba(31, 41, 55, 0.95); /* gray-800 with slight transparency */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        /* Keyframe Animations */
+        @keyframes zoomIn { from { transform: scale(1.2); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Animation Classes */
+        .animate-zoom-in { animation: zoomIn 1.2s ease-out forwards; }
+        .animate-slide-down { animation: slideDown 0.8s ease-out forwards; }
+        .animate-slide-up { animation: slideUp 1s ease-out forwards; }
+        .animate-fade-in { animation: fadeIn 0.5s ease-in-out forwards; }
+
+        /* Scroll Animation Utility */
+        .scroll-reveal-item { opacity: 0; transition: opacity 0.6s ease-out, transform 0.6s ease-out; transform: translateY(20px); }
+        .scroll-reveal-item.is-visible { opacity: 1; transform: translateY(0); }
+        
+        /* Staggered animation delays */
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-600 { animation-delay: 0.6s; }
+        .delay-800 { animation-delay: 0.8s; }
+
+        /* Navigation Link Hover Animation */
+        .nav-link { position: relative; text-decoration: none; padding-bottom: 4px; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 1.5px; display: block; margin-top: 2px; right: 0; background: #fff; transition: width 0.3s ease; }
+        .nav-link:hover::after { width: 100%; left: 0; background: #fff; }
+
+        /* Static Carousel Styles */
+        .carousel-slide { display: none; transition: opacity 0.5s ease-in-out; }
+        .carousel-slide.active { display: block; }
+
+        /* Scrolling Carousel Container Styles */
+        .scrolling-carousel-container { overflow: hidden; -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); cursor: grab; }
+        .scrolling-carousel-track { display: flex; will-change: transform; }
+        .scrolling-carousel-track.is-dragging { cursor: grabbing; }
+
+        /* Logo Carousel Specific Styles */
+        .logo-item { flex-shrink: 0; width: 160px; filter: grayscale(100%); opacity: 0.6; transition: all 0.3s ease; }
+        .logo-item:hover { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
+        
+        /* Testimonial & Reputation Carousel Card Styles */
+        .testimonial-card, .reputation-card { flex-shrink: 0; width: 80%; max-width: 400px; scroll-snap-align: start; }
+        @media (min-width: 640px) { .testimonial-card, .reputation-card { width: 45%; } }
+
+        /* Category Card Hover */
+        .category-card .overlay { opacity: 0; transition: opacity 0.3s ease-in-out; }
+        .category-card:hover .overlay { opacity: 1; }
+        .category-card .card-content { transition: transform 0.3s ease-in-out; }
+        .category-card:hover .card-content { transform: translateY(-10px); }
+
+        /* Modal Radio Button Styling */
+        .modal-radio:checked + label { border-color: #2563eb; background-color: #eff6ff; }
